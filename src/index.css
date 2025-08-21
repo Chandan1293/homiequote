@@ -1,0 +1,3 @@
+/* Minimal reset — do NOT style body or #root here */
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
