@@ -195,3 +195,178 @@ h1{ font-weight:800; letter-spacing:.2px }
   white-space: pre-wrap; /* show \n lines as lines */
   font-family: "Poppins", sans-serif;
 }
+/* ===== Two-pane layout ===== */
+.layout{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+.pane{ min-width: 0; } /* allow children to shrink nicely */
+
+@media (min-width: 992px){
+  .layout{
+    grid-template-columns: 58% 42%; /* items | quote */
+    align-items: start;
+  }
+  .pane.right .sticky{
+    position: sticky;
+    top: 96px;         /* keeps the quote visible while scrolling */
+  }
+}
+
+/* tighten the toolbar row above the grid */
+.toolbar{
+  justify-content: space-between;
+}
+
+/* textarea height in right pane */
+.quote-editor{
+  height: 520px;      /* desktop default; still resizable */
+}
+@media (max-width: 991px){
+  .quote-editor{ height: 380px; }
+}
+/* ==== Independent scroll for product list, sticky quote ==== */
+
+/* make sure the card doesn't clip the sticky child */
+.container { overflow: visible; }
+
+/* 2-pane grid height sized to viewport (minus header/toolbar) */
+@media (min-width: 992px){
+  .layout{
+    grid-template-columns: 58% 42%;
+    align-items: start;
+    height: calc(100vh - 180px); /* adjust if your header/toolbar is taller/shorter */
+  }
+
+  /* LEFT: scroll only the product list area */
+  .pane.left{
+    overflow-y: auto;
+    padding-right: 8px; /* keeps shadow visible when scrolling */
+    scrollbar-gutter: stable;
+  }
+
+  /* RIGHT: keep the quote panel stuck in view */
+  .pane.right .sticky{
+    position: sticky;
+    top: 96px; /* distance from top under your red header */
+    align-self: start;
+  }
+}
+
+/* optional: nicer scrollbar for the left pane (Chromium/Edge) */
+.pane.left::-webkit-scrollbar{ width: 10px; }
+.pane.left::-webkit-scrollbar-track{ background: #f2f2f2; border-radius: 8px; }
+.pane.left::-webkit-scrollbar-thumb{ background: #d6d6d6; border-radius: 8px; }
+.pane.left::-webkit-scrollbar-thumb:hover{ background: #c7c7c7; }
+/* ==== Two-pane layout: left scrolls inside card, right stays sticky ==== */
+
+/* keep rounded corners; clip anything that overflows the card */
+.container{
+  overflow: hidden;
+}
+
+/* base grid (mobile stacks) */
+.layout{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+.pane{ min-width: 0; } /* let children shrink without overflowing */
+
+/* desktop/tablet: two columns */
+@media (min-width: 992px){
+  .layout{
+    grid-template-columns: 60% 40%;      /* left: items | right: quote */
+    align-items: start;
+    gap: 22px;
+  }
+
+  /* LEFT: give the items pane its own scroll area inside the card */
+  .pane.left{
+    /* topbar (~70) + toolbar (~90) + container paddings (~40) ≈ 200 */
+    max-height: calc(100vh - 200px);     /* tweak 180–240 if needed */
+    overflow: auto;
+    padding-right: 8px;                  /* keep shadows visible */
+    scrollbar-gutter: stable;
+  }
+
+  /* RIGHT: make quote stay in view */
+  .pane.right .sticky{
+    position: sticky;
+    top: 96px;                            /* align under the red header; tweak 84–112 if needed */
+    align-self: start;
+  }
+}
+
+/* make the quote editor fit better in the sticky column */
+.pane.right .quote-editor{
+  height: 460px;          /* still resizable */
+  max-height: calc(100vh - 280px);
+}
+
+/* nicer scrollbar for the left pane (Chromium/Edge) */
+.pane.left::-webkit-scrollbar{ width: 10px; }
+.pane.left::-webkit-scrollbar-track{ background: #f2f2f2; border-radius: 8px; }
+.pane.left::-webkit-scrollbar-thumb{ background: #d6d6d6; border-radius: 8px; }
+.pane.left::-webkit-scrollbar-thumb:hover{ background: #c7c7c7; }
+/* ==== Two-pane layout: left scrolls; right sticky with its own scroll ==== */
+
+/* do NOT clip children; keep rounded card but allow content to show */
+.container{
+  overflow: visible;
+}
+
+/* base grid (mobile stacks) */
+.layout{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+.pane{ min-width: 0; } /* allow children to shrink */
+
+/* desktop/tablet: two columns */
+@media (min-width: 992px){
+  .layout{
+    grid-template-columns: 60% 40%;    /* left: items | right: quote */
+    align-items: start;
+    gap: 22px;
+  }
+
+  /* LEFT: scroll area inside the card */
+  .pane.left{
+    /* header + toolbar + container paddings ≈ 200px; adjust if needed */
+    max-height: calc(100vh - 200px);
+    overflow: auto;
+    padding-right: 8px;
+    scrollbar-gutter: stable;
+  }
+
+  /* RIGHT: sticky column that can scroll internally if taller */
+  .pane.right .sticky{
+    position: sticky;
+    top: 96px;                          /* align under the red header; tweak 84–112 if necessary */
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: calc(100vh - 120px);    /* keeps the whole column within the viewport */
+    overflow: auto;                     /* <-- ensures buttons never get cut off */
+    padding-bottom: 12px;
+  }
+}
+
+/* quote editor adapts to available height inside the sticky column */
+.pane.right .quote-editor{
+  min-height: 260px;
+  height: 420px;                        /* starting height; still resizable */
+  resize: vertical;
+}
+
+/* optional nicer scrollbar for left pane */
+.pane.left::-webkit-scrollbar{ width: 10px; }
+.pane.left::-webkit-scrollbar-track{ background: #f2f2f2; border-radius: 8px; }
+.pane.left::-webkit-scrollbar-thumb{ background: #d6d6d6; border-radius: 8px; }
+.pane.left::-webkit-scrollbar-thumb:hover{ background: #c7c7c7; }
