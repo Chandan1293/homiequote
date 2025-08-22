@@ -363,68 +363,72 @@ button:disabled{ opacity:.55; cursor:not-allowed; box-shadow:none }
   overscroll-behavior: contain;
   padding-top: 2px;               /* tiny cushion so nothing clips at very top */
 }
-/* ===== Print to PDF styles ===== */
+/* ================= Print to PDF ================= */
 .print-sheet { display: none; }
 
 @media print {
-  /* Page setup */
   @page {
-    size: A4;                 /* A4 portrait */
-    margin: 15mm;             /* printer margins */
+    size: A4;
+    margin: 15mm;
   }
 
-  /* Hide the app UI and background */
+  /* Hide the web UI; show only the print sheet */
+  .topbar, .container { display: none !important; }
   body[data-theme="homie"] {
     background: #fff !important;
   }
-  .topbar,
-  .container {
-    display: none !important;
-  }
-
-  /* Show our print sheet */
-  .print-sheet {
-    display: block !important;
-    color: #111;
+  .print-sheet { 
+    display: block !important; 
+    color:#111;
     font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   }
 
-  .print-header {
-    display: flex;
-    align-items: center;
-    gap: 14mm;
-    margin-bottom: 8mm;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 6mm;
+  /* Header (logo + meta) */
+  .print-header{
+    display:flex; align-items:center; gap:12mm;
+    padding-bottom:6mm; margin-bottom:8mm;
+    border-bottom:1px solid #ddd;
   }
-  .print-header img {
-    height: 18mm;             /* logo size in mm for consistent print */
-  }
-  .print-title h2 {
-    margin: 0 0 2mm 0;
-    font-size: 18pt;
-    line-height: 1.2;
-  }
-  .print-title p {
-    margin: 1mm 0;
-    font-size: 11pt;
-  }
+  .print-header img{ height:18mm; }
+  .print-title h2{ margin:0 0 2mm 0; font-size:18pt; }
+  .print-title p{ margin:1mm 0; font-size:11pt; }
 
-  .print-body {
-    white-space: pre-wrap;     /* wrap long lines */
-    font-size: 11pt;
-    line-height: 1.5;
+  /* Products table */
+  .print-table{
+    width:100%; border-collapse:collapse; margin-bottom:8mm;
+    table-layout: fixed;
+    font-size:11pt;
   }
-
-  .print-footer {
-    margin-top: 10mm;
-    font-size: 9pt;
-    color: #666;
-    border-top: 1px solid #ddd;
-    padding-top: 4mm;
+  .print-table th, .print-table td{
+    border:1px solid #cfd2d6; padding:6px 8px; text-align:center;
   }
+  .print-table thead th{
+    background:#e63946; color:#fff; font-weight:700;
+  }
+  .print-table tbody td:nth-child(2){ text-align:left; }
 
-  /* Avoid page breaks in awkward spots */
-  .print-header, .print-footer { page-break-inside: avoid; }
+  /* Totals block aligned to the right */
+  .print-totals{
+    width:100%;
+    display:flex; flex-direction:column; gap:4px;
+    align-items:flex-end; /* push to the right */
+    font-size:12pt; margin-top:2mm; margin-bottom:8mm;
+  }
+  .print-totals > div{
+    min-width: 70mm; display:flex; justify-content:space-between; gap:10mm;
+  }
+  .print-totals .total{
+    margin-top:2mm;
+    border-top:1px solid #cfd2d6; padding-top:2mm;
+  }
+  .print-totals strong{ font-weight:800; }
+
+  /* T&C */
+  .print-terms h3{ margin:0 0 3mm 0; font-size:12.5pt; }
+  .print-terms ul{ margin:0; padding-left:5mm; }
+  .print-terms li{ margin:1.6mm 0; font-size:10.8pt; }
+
+  /* Avoid awkward page breaks */
+  .print-header, .print-totals, .print-terms{ page-break-inside: avoid; }
 }
 

@@ -326,19 +326,70 @@ export default function App() {
         </div>
         {/* /layout */}
       </div>
-      {/* Print-only sheet (for PDF) */}
+      {/* ===== Print-only sheet (for PDF) ===== */}
 <div className="print-sheet" aria-hidden="true">
   <div className="print-header">
     <img src={logo} alt="Homie Logo" />
     <div className="print-title">
       <h2>Quotation</h2>
       {customer?.trim() && <p><strong>Customer:</strong> {customer.trim()}</p>}
-      <p><strong>Date:</strong> {fmtDate(new Date())}</p>
+      {(() => {
+        const today = new Date();
+        const valid = new Date(today); valid.setDate(valid.getDate() + 7);
+        return (
+          <p>
+            <strong>Date:</strong> {fmtDate(today)} &nbsp;
+            <span style={{color:"#444"}}>(Valid until: {fmtDate(valid)})</span>
+          </p>
+        );
+      })()}
     </div>
   </div>
-  <pre className="print-body">{quoteText}</pre>
-  <div className="print-footer">
-    <p>Homie • Quotation generated via app</p>
+
+  {/* Products table */}
+  <table className="print-table">
+    <thead>
+      <tr>
+        <th style={{width:"10%"}}>S.No</th>
+        <th>Product</th>
+        <th style={{width:"16%"}}>Quantity</th>
+        <th style={{width:"20%"}}>Price (₹)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {totals.lineItems.length === 0 ? (
+        <tr>
+          <td colSpan={4} style={{textAlign:"center", padding:"10mm 0"}}>No products selected.</td>
+        </tr>
+      ) : (
+        totals.lineItems.map((r, i) => (
+          <tr key={r.id}>
+            <td>{i + 1}</td>
+            <td style={{textAlign:"left"}}>{r.name}</td>
+            <td>{r.qty}</td>
+            <td>₹{r.price}</td>
+          </tr>
+        ))
+      )}
+    </tbody>
+  </table>
+
+  {/* Totals block (right aligned) */}
+  <div className="print-totals">
+    <div><span>Subtotal:</span><strong>₹{totals.subtotal}</strong></div>
+    {totals.discountApplied > 0 && (
+      <div><span>Discount:</span><strong>-₹{totals.discountApplied}</strong></div>
+    )}
+    <div className="total"><span>Total rent per month:</span><strong>₹{totals.total}</strong></div>
+    <div><span>Security deposit:</span><strong>₹{totals.deposit}</strong></div>
+  </div>
+
+  {/* Terms & Conditions */}
+  <div className="print-terms">
+    <h3>Terms & Conditions</h3>
+    <ul>
+      {TERMS.map((t) => <li key={t}>{t}</li>)}
+    </ul>
   </div>
 </div>
 
