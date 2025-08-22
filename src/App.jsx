@@ -52,7 +52,7 @@ export default function App() {
 
   // Discount: only “none” or “rupees”
   const [discountType, setDiscountType] = useState("none"); // "none" | "rupees"
-  const [discountValue, setDiscountValue] = useState(0);    // rupee amount
+  const [discountValue, setDiscountValue] = useState(0); // rupee amount
 
   // Quote text + editor controls
   const [quoteText, setQuoteText] = useState("Quotation\n\nNo products selected.");
@@ -115,7 +115,14 @@ export default function App() {
 
   /* ---------- Handlers ---------- */
   const inc = (id, delta) =>
-    setRows((prev) => prev.map((r) => (r.id === id ? { ...r, qty: Math.max(0, r.qty + delta) } : r)));
+    setRows((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, qty: Math.max(0, r.qty + delta) } : r))
+    );
+  const printPDF = () => {
+  // Uses the hidden print sheet below + @media print CSS
+  window.print();
+  };
+  
 
   const resetAll = () => {
     setRows((prev) => prev.map((r) => ({ ...r, qty: 0 })));
@@ -151,146 +158,190 @@ export default function App() {
       </header>
 
       <div className="container">
-        {/* Customer + Discount + Reset */}
-        <div className="toolbar actions" style={{ marginTop: 0 }}>
-        <input
-          className="input"
-          placeholder="Customer name"
-          value={customer}
-          onChange={(e) => setCustomer(e.target.value)}
-          style={{ width: 340 }}
-        />
-
-        {/* Discount controls (None | ₹ only) */}
-        <div
-          className="discount-controls"
-          style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}
-        >
-          <span style={{ fontWeight: 600 }}>Discount:</span>
-
-          <label className="pill">
-            <input
-              type="radio"
-              name="disc"
-              value="none"
-              checked={discountType === "none"}
-              onChange={() => { setDiscountType("none"); setDiscountValue(0); }}
-            />
-            None
-          </label>
-
-          <label className="pill">
-            <input
-              type="radio"
-              name="disc"
-              value="rupees"
-              checked={discountType === "rupees"}
-              onChange={() => setDiscountType("rupees")}
-            />
-            ₹
-          </label>
-
-          <input
-            className="input"
-            style={{ width: 140 }}
-            type="number"
-            min="0"
-            placeholder="Discount (₹)"
-            value={discountValue}
-            onChange={(e) => setDiscountValue(Number(e.target.value))}
-            disabled={discountType !== "rupees"}
-          />
-
-          <button className="btn-info" onClick={resetAll}>Reset / Clear All</button>
-        </div>
-      </div>
-
-      {/* Two-column layout */}
-      <div className="layout">
-        {/* LEFT: items */}
-        <div className="pane left">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>S.No</th>
-                <th>Product</th>
-                <th>Price (₹)</th>
-                <th>Quantity</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r, idx) => (
-                <tr key={r.id}>
-                  <td>{idx + 1}</td>
-                  <td style={{ textAlign: "left" }}>{r.name}</td>
-                  <td>{currency(r.price).replace("₹", "")}</td>
-                  <td>{r.qty}</td>
-                  <td className="controls">
-                    <button className="btn-plus" onClick={() => inc(r.id, +1)}>+</button>
-                    <button className="btn-minus" onClick={() => inc(r.id, -1)}>-</button>
-                  </td>
+        {/* Two-column layout */}
+        <div className="layout">
+          {/* LEFT: products list only (compact) */}
+          <div className="pane left">
+            <table className="table compact">
+              <thead>
+                <tr>
+                  <th>S.NO</th>
+                  <th>PRODUCT</th>
+                  <th>PRICE (₹)</th>
+                  <th>QUANTITY</th>
+                  <th>ACTION</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {rows.map((r, idx) => (
+                  <tr key={r.id}>
+                    <td>{idx + 1}</td>
+                    <td style={{ textAlign: "left" }}>{r.name}</td>
+                    <td>{currency(r.price).replace("₹", "")}</td>
+                    <td>{r.qty}</td>
+                    <td className="controls">
+                      <button className="btn-plus btn-rect" onClick={() => inc(r.id, +1)}>
+                        +
+                      </button>
+                      <button className="btn-minus btn-rect" onClick={() => inc(r.id, -1)}>
+                        -
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
 
-          {/* Live totals under table */}
-          {totals.subtotal > 0 && (
-            <div className="totals">
-              <p><strong>Subtotal:</strong> {currency(totals.subtotal)}</p>
-              <p><strong>Discount:</strong> {currency(totals.discountApplied)}</p>
-              <p><strong>Total / month:</strong> {currency(totals.total)}</p>
-              <p><strong>Security Deposit:</strong> {currency(totals.deposit)}</p>
-            </div>
-          )}
-        </div>
+            {/* Optional totals under table */}
+            {totals.subtotal > 0 && (
+              <div className="totals">
+                <p>
+                  <strong>Subtotal:</strong> {currency(totals.subtotal)}
+                </p>
+                <p>
+                  <strong>Discount:</strong> {currency(totals.discountApplied)}
+                </p>
+                <p>
+                  <strong>Total / month:</strong> {currency(totals.total)}
+                </p>
+                <p>
+                  <strong>Security Deposit:</strong> {currency(totals.deposit)}
+                </p>
+              </div>
+            )}
+          </div>
 
-        {/* RIGHT: sticky quote editor + actions */}
-        <div className="pane right">
-          <div className="sticky">
-            <div className="actions" style={{ marginTop: 0, marginBottom: 8 }}>
-              <label className="pill" title="If you type in the quote box, auto-update pauses.">
-                <input
-                  type="checkbox"
-                  checked={autoUpdate}
-                  onChange={(e) => setAutoUpdate(e.target.checked)}
-                />
-                Auto-update
-              </label>
-              {manuallyEdited && !autoUpdate && (
-                <span className="note">Manual edits detected — auto-update is paused.</span>
-              )}
-            </div>
-
-            <textarea
-              className="quote-editor card"
-              value={quoteText}
-              onChange={(e) => {
-                setQuoteText(e.target.value);
-                setManuallyEdited(true);
-                setAutoUpdate(false);
-              }}
-              rows={16}
-            />
-
-            <div className="actions">
+          {/* RIGHT: controls + sticky quote */}
+          <div className="pane right">
+            <div className="sticky">
+              {/* Customer name */}
               <input
                 className="input"
-                placeholder="WhatsApp number (e.g. 919876543210)"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                placeholder="Customer name"
+                value={customer}
+                onChange={(e) => setCustomer(e.target.value)}
+                style={{ width: "100%" }}
               />
-              <button className="btn-info" onClick={copyToClipboard}>Copy Text</button>
-              <button className="btn-wa" onClick={openWhatsApp} disabled={totals.lineItems?.length === 0}>
-                Send to WhatsApp
-              </button>
+
+              {/* Discount (None | ₹ only) */}
+              <div
+                className="discount-controls"
+                style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}
+              >
+                <span style={{ fontWeight: 600 }}>Discount:</span>
+
+                <label className="pill">
+                  <input
+                    type="radio"
+                    name="disc"
+                    value="none"
+                    checked={discountType === "none"}
+                    onChange={() => {
+                      setDiscountType("none");
+                      setDiscountValue(0);
+                    }}
+                  />
+                  None
+                </label>
+
+                <label className="pill">
+                  <input
+                    type="radio"
+                    name="disc"
+                    value="rupees"
+                    checked={discountType === "rupees"}
+                    onChange={() => setDiscountType("rupees")}
+                  />
+                  ₹
+                </label>
+
+                <input
+                  className="input"
+                  style={{ width: 160 }}
+                  type="number"
+                  min="0"
+                  placeholder="Discount (₹)"
+                  value={discountValue}
+                  onChange={(e) => setDiscountValue(Number(e.target.value))}
+                  disabled={discountType !== "rupees"}
+                />
+              </div>
+
+              {/* Auto-update */}
+              <div className="actions" style={{ justifyContent: "flex-start", marginTop: 4, marginBottom: 8 }}>
+                <label className="pill" title="If you type in the quote box, auto-update pauses.">
+                  <input
+                    type="checkbox"
+                    checked={autoUpdate}
+                    onChange={(e) => setAutoUpdate(e.target.checked)}
+                  />
+                  Auto-update
+                </label>
+                {manuallyEdited && !autoUpdate && (
+                  <span className="note">Manual edits detected — auto-update is paused.</span>
+                )}
+              </div>
+
+              {/* Quote editor */}
+              <textarea
+                className="quote-editor card"
+                value={quoteText}
+                onChange={(e) => {
+                  setQuoteText(e.target.value);
+                  setManuallyEdited(true);
+                  setAutoUpdate(false);
+                }}
+                rows={18}
+              />
+
+              {/* Actions */}
+              <div className="actions" style={{ marginTop: 10 }}>
+                <input
+                  className="input"
+                  placeholder="WhatsApp number (e.g. 919876543210)"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  style={{ width: "100%" }}
+                />
+                <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                  <button className="btn-info" onClick={copyToClipboard}>
+                    Copy Text
+                  </button>
+                  <button
+                    className="btn-wa"
+                    onClick={openWhatsApp}
+                    disabled={totals.lineItems?.length === 0}
+                  >
+                    Send to WhatsApp
+                  </button>
+                  <button className="btn-primary" onClick={resetAll}>
+                    Reset / Clear All
+                  </button>
+                  <button className="btn-primary" onClick={printPDF}>Download PDF</button>
+
+                </div>
+              </div>
             </div>
           </div>
         </div>
+        {/* /layout */}
       </div>
+      {/* Print-only sheet (for PDF) */}
+<div className="print-sheet" aria-hidden="true">
+  <div className="print-header">
+    <img src={logo} alt="Homie Logo" />
+    <div className="print-title">
+      <h2>Quotation</h2>
+      {customer?.trim() && <p><strong>Customer:</strong> {customer.trim()}</p>}
+      <p><strong>Date:</strong> {fmtDate(new Date())}</p>
+    </div>
+  </div>
+  <pre className="print-body">{quoteText}</pre>
+  <div className="print-footer">
+    <p>Homie • Quotation generated via app</p>
+  </div>
+</div>
 
-      </div>
     </>
   );
 }

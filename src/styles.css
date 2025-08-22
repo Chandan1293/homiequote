@@ -1,4 +1,11 @@
-/* ========= Homie Premium Theme (Red + Charcoal) ========= */
+/* =========================
+   Homie Premium Theme (full)
+   ========================= */
+
+/* Global reset */
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+
 :root{
   --radius: 14px;
   --radius-sm: 10px;
@@ -6,21 +13,23 @@
   --shadow-2: 0 14px 40px rgba(0,0,0,.10);
   --font-main: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   --font-num: ui-rounded, "Poppins", sans-serif;
-}
 
-body[data-theme="homie"]{
-  --bg: #eef0f3;
-  --bg-soft: #fff1f1;
-  --card: #ffffff;
-  --text: #1f2937;
-  --muted: #6b7280;
-  --border: #ececec;
-  --accent: #e63946;
+  --accent: #e63946;         /* Homie red */
   --accent-700:#d42a37;
   --accent-800:#b71f2b;
   --accent-contrast:#ffffff;
-  --ring: rgba(230,57,70,.35);
 
+  --text: #1f2937;
+  --muted: #6b7280;
+  --card: #ffffff;
+  --border: #ececec;
+  --bg: #eef0f3;
+  --bg-soft: #fff1f1;
+  --ring: rgba(230,57,70,.35);
+}
+
+/* ---------- Body + background ---------- */
+body[data-theme="homie"]{
   margin:0;
   min-height:100vh;
   display:flex; justify-content:center; align-items:flex-start;
@@ -28,26 +37,25 @@ body[data-theme="homie"]{
   color:var(--text);
   position:relative;
 
-  /* Background: gradient + vignette */
   background:
     radial-gradient(900px 520px at -10% -20%, color-mix(in oklab, var(--bg-soft) 75%, white), transparent 60%),
     radial-gradient(800px 480px at 110% -10%, color-mix(in oklab, var(--bg-soft) 75%, white), transparent 55%),
     linear-gradient(180deg, var(--bg) 0%, #f1f2f5 100%);
 }
 
-/* Doodle pattern background */
+/* doodle pattern file should be at /public/doodle-bg.png */
 body[data-theme="homie"]::before{
   content:"";
   position:fixed; inset:0; z-index:-1;
-  background-image:url("/pattern.png");
+  background-image:url("/doodle-bg.png");
   background-repeat:repeat;
-  background-size:220px;      /* denser doodles */
-  opacity:.18;                /* more visible */
-  filter:contrast(1.2) saturate(1.1);
+  background-size: 460px;
+  opacity:.24;
+  filter:contrast(1.25) brightness(1.1);
   pointer-events:none;
 }
 
-/* ========= Top Gradient Header ========= */
+/* ---------- Topbar ---------- */
 .topbar{
   width:100%;
   position:sticky; top:0; z-index:10;
@@ -55,27 +63,26 @@ body[data-theme="homie"]::before{
   box-shadow: 0 6px 18px rgba(0,0,0,.12);
 }
 .topbar .header{
-  max-width:1080px; margin:0 auto; padding:16px 18px;
+  max-width:1220px; margin:0 auto; padding:16px 18px;
   display:flex; align-items:center; justify-content:center; gap:14px;
   position:relative;
 }
-.topbar .logo{ height:56px !important; padding:0 !important; filter:none !important; }
+.topbar .logo{ height:56px; display:block; }
 .topbar h1{
   margin:0; color:var(--accent-contrast); font-weight:800;
   font-size:30px; letter-spacing:.4px;
 }
 .topbar::after{
-  content:"";
-  position:absolute; left:0; right:0; top:0; height:56%;
+  content:""; position:absolute; left:0; right:0; top:0; height:56%;
   background: linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,0));
   pointer-events:none;
 }
 
-/* ========= Main App Card ========= */
+/* ---------- Main container ---------- */
 .container{
-  width:min(100%, 920px);
+  width:min(100%, 1220px);
   margin:34px auto;
-  padding:34px 28px;
+  padding:26px 22px;
   background:var(--card);
   border:1px solid var(--border);
   border-radius:var(--radius);
@@ -83,9 +90,17 @@ body[data-theme="homie"]::before{
   text-align:center;
   position:relative;
 }
+.container::before{
+  content:"";
+  position:absolute; inset:0; pointer-events:none;
+  background-image:url("/doodle-bg.png");
+  background-repeat:repeat;
+  background-size:320px;
+  opacity:.06;
+  border-radius:inherit;
+}
 
-
-/* ========= Table ========= */
+/* ---------- Table ---------- */
 .table{
   width:100%;
   border-spacing:0 10px;
@@ -109,24 +124,34 @@ body[data-theme="homie"]::before{
 .table tbody tr td:first-child{ border-radius:12px 0 0 12px; }
 .table tbody tr td:last-child{  border-radius:0 12px 12px 0; }
 
-/* ========= Controls ========= */
-.controls button{
-  width:42px; height:42px; padding:0;
-  border:none; border-radius:50%;
-  font-weight:700; cursor:pointer;
-  transition:transform .12s ease, filter .2s ease, box-shadow .2s ease;
-  box-shadow:0 6px 16px rgba(0,0,0,.12);
-}
-.btn-plus{ background:var(--accent); color:var(--accent-contrast) }
-.btn-plus:hover{ filter:brightness(.98); transform:translateY(-1px) }
-.btn-minus{ background:#6b7280; color:#fff }
-.btn-minus:hover{ transform:translateY(-1px) }
+/* Compact variation */
+.table.compact th, .table.compact td{ padding:10px 12px; }
+.table.compact tbody tr{ box-shadow:0 4px 12px rgba(0,0,0,.05); }
 
-/* ========= Totals & Quote ========= */
+/* ---------- Controls ---------- */
+.controls button{
+  margin:0 4px;
+  border:none; cursor:pointer; font-weight:700;
+  transition:transform .12s ease, filter .2s ease, box-shadow .2s ease;
+}
+
+/* rectangular, smaller +/- buttons (keep colors) */
+.btn-rect{
+  width:36px; height:32px; border-radius:8px;
+  font-size:18px; line-height:1;
+  display:inline-flex; align-items:center; justify-content:center;
+  box-shadow:0 4px 12px rgba(0,0,0,.10);
+}
+.btn-plus{ background:var(--accent); color:#fff; }
+.btn-plus:hover{ filter:brightness(.98); transform:translateY(-1px); }
+.btn-minus{ background:#6b7280; color:#fff; }
+.btn-minus:hover{ transform:translateY(-1px); }
+
+/* ---------- Totals & Quote ---------- */
 .totals{
   display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:14px;
   padding:16px 18px; background: var(--bg-soft); border:1px solid var(--border);
-  border-radius:var(--radius-sm); font-weight:600; margin-bottom:12px;
+  border-radius:var(--radius-sm); font-weight:600; margin-bottom:12px; text-align:left;
 }
 .totals p{ margin:0 }
 
@@ -136,16 +161,16 @@ body[data-theme="homie"]::before{
   white-space:pre-line; line-height:1.6; font-size:15px; min-height:120px;
 }
 
-/* ========= Actions & Inputs ========= */
+/* ---------- Buttons & inputs ---------- */
 .actions{
-  margin:22px 0; display:flex; flex-wrap:wrap; justify-content:center; gap:14px;
+  margin:14px 0; display:flex; gap:12px; flex-wrap:wrap; justify-content:center;
 }
 .btn-primary,.btn-info,.btn-wa{
   padding:12px 18px; border:none; border-radius:12px; font-weight:700; font-size:15px; cursor:pointer;
   transition:transform .15s ease, box-shadow .2s ease, filter .2s ease;
   box-shadow:var(--shadow-2);
 }
-.btn-primary{ background:var(--accent); color:var(--accent-contrast) }
+.btn-primary{ background:var(--accent); color:#fff; }
 .btn-primary:hover{ transform:translateY(-2px); filter:saturate(1.02) }
 .btn-info{ background:#2563eb; color:#fff }
 .btn-info:hover{ transform:translateY(-2px) }
@@ -159,214 +184,247 @@ button:disabled{ opacity:.55; cursor:not-allowed; box-shadow:none }
 }
 .input:focus{ outline:none; border-color:var(--accent); box-shadow:0 0 0 5px var(--ring) }
 
-/* ========= Misc ========= */
-h1{ font-weight:800; letter-spacing:.2px }
-.logo{ display:block }
-
-@media (max-width:720px){
-  body[data-theme="homie"]::before{ background-size:200px; opacity:.16; }
-  .container{ width:94%; padding:20px 16px; }
-  .controls button{ width:38px; height:38px; }
-  .topbar h1{ font-size:22px }
+/* Small helpers */
+.pill{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:8px 12px; background:#fff; border:1px solid var(--border);
+  border-radius:999px; font-weight:600; box-shadow:0 2px 8px rgba(0,0,0,.06);
+  user-select:none;
 }
+.note{ font-size:13px; color:var(--muted); }
 
-/* Small helpers for new controls */
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0,0,0,.06);
-  user-select: none;
-}
-
-.note {
-  font-size: 13px;
-  color: var(--muted);
-}
-
-.quote-editor {
-  width: 100%;
-  resize: vertical;
-  white-space: pre-wrap; /* show \n lines as lines */
-  font-family: "Poppins", sans-serif;
-}
-/* ===== Two-pane layout ===== */
-.layout{
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 18px;
-}
-
-.pane{ min-width: 0; } /* allow children to shrink nicely */
-
-@media (min-width: 992px){
-  .layout{
-    grid-template-columns: 58% 42%; /* items | quote */
-    align-items: start;
-  }
-  .pane.right .sticky{
-    position: sticky;
-    top: 96px;         /* keeps the quote visible while scrolling */
-  }
-}
-
-/* tighten the toolbar row above the grid */
-.toolbar{
-  justify-content: space-between;
-}
-
-/* textarea height in right pane */
+/* Quote textarea */
 .quote-editor{
-  height: 520px;      /* desktop default; still resizable */
+  width:100%; resize:vertical; white-space:pre-wrap;
+  font-family:"Poppins", sans-serif;
+  min-height:300px; height:520px;
 }
-@media (max-width: 991px){
-  .quote-editor{ height: 380px; }
-}
-/* ==== Independent scroll for product list, sticky quote ==== */
 
-/* make sure the card doesn't clip the sticky child */
-.container { overflow: visible; }
+/* ---------- Two-pane layout ---------- */
+.layout{ display:grid; grid-template-columns:1fr; gap:18px; }
+.pane{ min-width:0; } /* avoid overflow from children */
 
-/* 2-pane grid height sized to viewport (minus header/toolbar) */
 @media (min-width: 992px){
   .layout{
-    grid-template-columns: 58% 42%;
-    align-items: start;
-    height: calc(100vh - 180px); /* adjust if your header/toolbar is taller/shorter */
+    /* Right pane wider to avoid horizontal scroll */
+    grid-template-columns: 44% 56%;   /* LEFT | RIGHT  (tweak 42/58 or 40/60 if you want even wider right) */
+    align-items:start;
+    gap:22px;
   }
 
-  /* LEFT: scroll only the product list area */
+  /* LEFT: scroll inside the white card */
   .pane.left{
-    overflow-y: auto;
-    padding-right: 8px; /* keeps shadow visible when scrolling */
+    max-height: calc(100vh - 200px);   /* header+container padding offset */
+    overflow:auto;
+    padding-right:8px;
     scrollbar-gutter: stable;
   }
 
-  /* RIGHT: keep the quote panel stuck in view */
+  /* RIGHT: sticky column; no horizontal scroll, can scroll vertically if taller */
+  .pane.right{ overflow-x:hidden; }
   .pane.right .sticky{
     position: sticky;
-    top: 96px; /* distance from top under your red header */
-    align-self: start;
+    top: 96px;                          /* sit under the red header */
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    max-height: calc(100vh - 120px);
+    overflow-y:auto;
+    overflow-x:hidden;                  /* <— kill horizontal scrollbar entirely */
+    padding-bottom:12px;
   }
 }
 
-/* optional: nicer scrollbar for the left pane (Chromium/Edge) */
-.pane.left::-webkit-scrollbar{ width: 10px; }
-.pane.left::-webkit-scrollbar-track{ background: #f2f2f2; border-radius: 8px; }
-.pane.left::-webkit-scrollbar-thumb{ background: #d6d6d6; border-radius: 8px; }
-.pane.left::-webkit-scrollbar-thumb:hover{ background: #c7c7c7; }
-/* ==== Two-pane layout: left scrolls inside card, right stays sticky ==== */
+/* Mobile tweaks */
+@media (max-width: 991.98px){
+  .topbar .header{ padding:14px 12px; }
+  .topbar h1{ font-size:22px; }
+  .quote-editor{ height:380px; }
+}
+/* ---- Make product table header sticky inside the left pane ---- */
+.pane.left { 
+  overscroll-behavior: contain;        /* avoid rubber-band/bounce */
+  background: #fff;                     /* solid backdrop behind sticky head */
+  border-radius: 12px;
+}
 
-/* keep rounded corners; clip anything that overflows the card */
-.container{
+/* sticky header cells */
+.table thead th {
+  position: sticky;
+  top: 0;                               /* stick to the top of the left pane */
+  z-index: 5;
+  background: #e63946;                  /* same as your header color */
+  color: #fff;
+  /* lift the header above rows while scrolling */
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+
+/* ===== Ultra-compact product list (LEFT PANE) ===== */
+
+/* shrink the available vertical paddings so more rows fit */
+@media (min-width: 992px){
+  .pane.left{
+    max-height: calc(100vh - 150px);   /* was ~200px; shows more rows */
+  }
+}
+
+/* collapse gaps between rows, use thin dividers instead of shadows */
+.pane.left .table.compact{
+  border-collapse: collapse !important;
+  border-spacing: 0 !important;
+  table-layout: fixed;                 /* predictable, compact columns */
+}
+
+/* tighter header */
+.pane.left .table.compact thead th{
+  padding: 8px 8px !important;
+  font-size: 12px !important;
+  line-height: 1.1;
+}
+
+/* tighter cells */
+.pane.left .table.compact td{
+  padding: 6px 8px !important;         /* was 10–14px */
+  font-size: 13px !important;
+  line-height: 1.15;
+  background: #fff;
+  border-bottom: 1px solid #eee;       /* thin divider */
+}
+
+/* remove row shadow to avoid extra visual height */
+.pane.left .table.compact tbody tr{
+  box-shadow: none !important;
+}
+
+/* column widths (very compact) */
+.pane.left .table.compact th:nth-child(1),
+.pane.left .table.compact td:nth-child(1){ width: 44px; }     /* S.NO */
+.pane.left .table.compact th:nth-child(3),
+.pane.left .table.compact td:nth-child(3){ width: 74px; }     /* PRICE */
+.pane.left .table.compact th:nth-child(4),
+.pane.left .table.compact td:nth-child(4){ width: 76px; }     /* QTY  */
+.pane.left .table.compact th:nth-child(5),
+.pane.left .table.compact td:nth-child(5){ width: 96px; }     /* ACTION */
+
+/* product name: single line, ellipsis if too long */
+.pane.left .table.compact td:nth-child(2){
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* base grid (mobile stacks) */
-.layout{
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 18px;
+/* smaller rectangular +/- buttons (same colors) */
+.pane.left .btn-rect{
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  font-size: 14px;
+  box-shadow: 0 3px 8px rgba(0,0,0,.08);
+}
+.pane.left .controls button + button{ margin-left: 4px; }
+
+/* keep the sticky header working with the compact layout */
+.pane.left .table thead th{
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #e63946;                 /* Homie red */
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,.06);
+}
+/* --- FIX: left table header overlapping first rows --- */
+
+/* 1) Make thead itself sticky (more reliable than per-th on some browsers) */
+.pane.left .table.compact {
+  border-collapse: collapse !important;
+  border-spacing: 0 !important;
+  table-layout: fixed;
+}
+.pane.left .table.compact thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;                /* stays above body rows */
+}
+.pane.left .table.compact thead th {
+  position: static;           /* avoid double-sticky quirks */
+  background: #e63946;        /* Homie red */
+  color: #fff;
+  padding: 8px 10px !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,.06);
 }
 
-.pane{ min-width: 0; } /* let children shrink without overflowing */
+/* 2) Ensure the first data row never sits under the sticky header */
+.pane.left .table.compact tbody tr:first-child td {
+  padding-top: 10px !important;   /* small spacer under the header */
+}
 
-/* desktop/tablet: two columns */
-@media (min-width: 992px){
-  .layout{
-    grid-template-columns: 60% 40%;      /* left: items | right: quote */
-    align-items: start;
-    gap: 22px;
+/* 3) Prevent rubber-band behavior inside the scroll area */
+.pane.left {
+  overscroll-behavior: contain;
+  padding-top: 2px;               /* tiny cushion so nothing clips at very top */
+}
+/* ===== Print to PDF styles ===== */
+.print-sheet { display: none; }
+
+@media print {
+  /* Page setup */
+  @page {
+    size: A4;                 /* A4 portrait */
+    margin: 15mm;             /* printer margins */
   }
 
-  /* LEFT: give the items pane its own scroll area inside the card */
-  .pane.left{
-    /* topbar (~70) + toolbar (~90) + container paddings (~40) ≈ 200 */
-    max-height: calc(100vh - 200px);     /* tweak 180–240 if needed */
-    overflow: auto;
-    padding-right: 8px;                  /* keep shadows visible */
-    scrollbar-gutter: stable;
+  /* Hide the app UI and background */
+  body[data-theme="homie"] {
+    background: #fff !important;
+  }
+  .topbar,
+  .container {
+    display: none !important;
   }
 
-  /* RIGHT: make quote stay in view */
-  .pane.right .sticky{
-    position: sticky;
-    top: 96px;                            /* align under the red header; tweak 84–112 if needed */
-    align-self: start;
-  }
-}
-
-/* make the quote editor fit better in the sticky column */
-.pane.right .quote-editor{
-  height: 460px;          /* still resizable */
-  max-height: calc(100vh - 280px);
-}
-
-/* nicer scrollbar for the left pane (Chromium/Edge) */
-.pane.left::-webkit-scrollbar{ width: 10px; }
-.pane.left::-webkit-scrollbar-track{ background: #f2f2f2; border-radius: 8px; }
-.pane.left::-webkit-scrollbar-thumb{ background: #d6d6d6; border-radius: 8px; }
-.pane.left::-webkit-scrollbar-thumb:hover{ background: #c7c7c7; }
-/* ==== Two-pane layout: left scrolls; right sticky with its own scroll ==== */
-
-/* do NOT clip children; keep rounded card but allow content to show */
-.container{
-  overflow: visible;
-}
-
-/* base grid (mobile stacks) */
-.layout{
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 18px;
-}
-
-.pane{ min-width: 0; } /* allow children to shrink */
-
-/* desktop/tablet: two columns */
-@media (min-width: 992px){
-  .layout{
-    grid-template-columns: 60% 40%;    /* left: items | right: quote */
-    align-items: start;
-    gap: 22px;
+  /* Show our print sheet */
+  .print-sheet {
+    display: block !important;
+    color: #111;
+    font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   }
 
-  /* LEFT: scroll area inside the card */
-  .pane.left{
-    /* header + toolbar + container paddings ≈ 200px; adjust if needed */
-    max-height: calc(100vh - 200px);
-    overflow: auto;
-    padding-right: 8px;
-    scrollbar-gutter: stable;
-  }
-
-  /* RIGHT: sticky column that can scroll internally if taller */
-  .pane.right .sticky{
-    position: sticky;
-    top: 96px;                          /* align under the red header; tweak 84–112 if necessary */
+  .print-header {
     display: flex;
-    flex-direction: column;
-    gap: 12px;
-    max-height: calc(100vh - 120px);    /* keeps the whole column within the viewport */
-    overflow: auto;                     /* <-- ensures buttons never get cut off */
-    padding-bottom: 12px;
+    align-items: center;
+    gap: 14mm;
+    margin-bottom: 8mm;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 6mm;
   }
+  .print-header img {
+    height: 18mm;             /* logo size in mm for consistent print */
+  }
+  .print-title h2 {
+    margin: 0 0 2mm 0;
+    font-size: 18pt;
+    line-height: 1.2;
+  }
+  .print-title p {
+    margin: 1mm 0;
+    font-size: 11pt;
+  }
+
+  .print-body {
+    white-space: pre-wrap;     /* wrap long lines */
+    font-size: 11pt;
+    line-height: 1.5;
+  }
+
+  .print-footer {
+    margin-top: 10mm;
+    font-size: 9pt;
+    color: #666;
+    border-top: 1px solid #ddd;
+    padding-top: 4mm;
+  }
+
+  /* Avoid page breaks in awkward spots */
+  .print-header, .print-footer { page-break-inside: avoid; }
 }
 
-/* quote editor adapts to available height inside the sticky column */
-.pane.right .quote-editor{
-  min-height: 260px;
-  height: 420px;                        /* starting height; still resizable */
-  resize: vertical;
-}
-
-/* optional nicer scrollbar for left pane */
-.pane.left::-webkit-scrollbar{ width: 10px; }
-.pane.left::-webkit-scrollbar-track{ background: #f2f2f2; border-radius: 8px; }
-.pane.left::-webkit-scrollbar-thumb{ background: #d6d6d6; border-radius: 8px; }
-.pane.left::-webkit-scrollbar-thumb:hover{ background: #c7c7c7; }
